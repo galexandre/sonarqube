@@ -7,4 +7,5 @@ shift
 mvn verify \
   -pl :sonar-db \
   -Dorchestrator.configUrl=$ORCHESTRATOR_CONFIG_URL \
+  -PdbTests \
   -B -e -V $*
