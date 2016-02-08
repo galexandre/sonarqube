@@ -192,7 +192,7 @@
           <artifactId>sqljdbc41</artifactId>
           <version>4.1</version>
           <scope>system</scope>
-          <systemPath>../../sonar-application/src/main/assembly/lib/jdbc/mssql/sqljdbc41.jar
+          <systemPath>${project.basedir}/../../sonar-application/src/main/assembly/lib/jdbc/mssql/sqljdbc41.jar
           </systemPath>
         </dependency>
       </dependencies>
