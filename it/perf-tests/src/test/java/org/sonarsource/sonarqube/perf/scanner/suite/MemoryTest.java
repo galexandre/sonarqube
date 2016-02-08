@@ -22,10 +22,7 @@ package org.sonarsource.sonarqube.perf.scanner.suite;
 import com.google.common.base.Strings;
 import com.sonar.orchestrator.Orchestrator;
 import com.sonar.orchestrator.build.BuildResult;
-import com.sonar.orchestrator.build.SonarRunner;
-import org.sonarsource.sonarqube.perf.MavenLogs;
-import org.sonarsource.sonarqube.perf.PerfRule;
-import org.sonarsource.sonarqube.perf.PerfTestCase;
+import com.sonar.orchestrator.build.SonarScanner;
 import java.io.File;
 import java.io.IOException;
 import org.apache.commons.io.FileUtils;
@@ -35,6 +32,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.sonar.wsclient.services.PropertyCreateQuery;
+import org.sonarsource.sonarqube.perf.MavenLogs;
+import org.sonarsource.sonarqube.perf.PerfRule;
+import org.sonarsource.sonarqube.perf.PerfTestCase;
 
 public class MemoryTest extends PerfTestCase {
 
@@ -78,22 +78,22 @@ public class MemoryTest extends PerfTestCase {
     FileUtils.write(new File(baseDir, "sonar-project.properties"), "sonar.modules=moduleA,moduleB,moduleC\n", true);
     FileUtils.write(new File(baseDir, "sonar-project.properties"), "sonar.myBigProp=" + Strings.repeat("A", 10000), true);
 
-    SonarRunner runner = SonarRunner.create()
+    SonarScanner scanner = SonarScanner.create()
       .setProperties(
         "sonar.projectKey", "big-module-tree",
         "sonar.projectName", "Big Module Tree",
         "sonar.projectVersion", "1.0",
         "sonar.sources", "",
-        "sonar.showProfiling", "true")
-      .setEnvironmentVariable("SONAR_RUNNER_OPTS", "-Xmx512m -server -XX:MaxPermSize=64m")
+        "sonar.showProfiling", "true");
+    scanner.setEnvironmentVariable("SONAR_RUNNER_OPTS", "-Xmx512m -server -XX:MaxPermSize=64m")
       .setProjectDir(baseDir);
 
-    BuildResult result = orchestrator.executeBuild(runner);
+    BuildResult result = orchestrator.executeBuild(scanner);
     perfRule.assertDurationAround(MavenLogs.extractTotalTime(result.getLogs()), 5900L);
 
     // Second execution with a property on server side
     orchestrator.getServer().getAdminWsClient().create(new PropertyCreateQuery("sonar.anotherBigProp", Strings.repeat("B", 1000), "big-module-tree"));
-    result = orchestrator.executeBuild(runner);
+    result = orchestrator.executeBuild(scanner);
     perfRule.assertDurationAround(MavenLogs.extractTotalTime(result.getLogs()), 5600L);
   }
 

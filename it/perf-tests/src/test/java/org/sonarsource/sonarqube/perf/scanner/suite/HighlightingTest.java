@@ -21,18 +21,21 @@ package org.sonarsource.sonarqube.perf.scanner.suite;
 
 import com.sonar.orchestrator.Orchestrator;
 import com.sonar.orchestrator.build.BuildResult;
-import com.sonar.orchestrator.build.SonarRunner;
-import org.sonarsource.sonarqube.perf.MavenLogs;
-import org.sonarsource.sonarqube.perf.PerfRule;
-import org.sonarsource.sonarqube.perf.PerfTestCase;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
-import org.junit.*;
-import org.junit.rules.TemporaryFolder;
-
+import com.sonar.orchestrator.build.SonarScanner;
 import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.ClassRule;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+import org.sonarsource.sonarqube.perf.MavenLogs;
+import org.sonarsource.sonarqube.perf.PerfRule;
+import org.sonarsource.sonarqube.perf.PerfTestCase;
 
 public class HighlightingTest extends PerfTestCase {
 
@@ -63,7 +66,6 @@ public class HighlightingTest extends PerfTestCase {
 
   @Test
   public void computeSyntaxHighlightingOnBigFiles() throws IOException {
-
     File baseDir = temp.newFolder();
     File srcDir = new File(baseDir, "src");
     srcDir.mkdir();
@@ -83,17 +85,17 @@ public class HighlightingTest extends PerfTestCase {
       FileUtils.write(xoohighlightingFile, sb.toString());
     }
 
-    SonarRunner runner = SonarRunner.create()
+    SonarScanner scanner = SonarScanner.create()
       .setProperties(
         "sonar.projectKey", "highlighting",
         "sonar.projectName", "highlighting",
         "sonar.projectVersion", "1.0",
         "sonar.sources", "src",
-        "sonar.showProfiling", "true")
-      .setEnvironmentVariable("SONAR_RUNNER_OPTS", "-Xmx512m -server -XX:MaxPermSize=64m")
+        "sonar.showProfiling", "true");
+    scanner.setEnvironmentVariable("SONAR_RUNNER_OPTS", "-Xmx512m -server -XX:MaxPermSize=64m")
       .setProjectDir(baseDir);
 
-    BuildResult result = orchestrator.executeBuild(runner);
+    BuildResult result = orchestrator.executeBuild(scanner);
     System.out.println("Total time: " + MavenLogs.extractTotalTime(result.getLogs()));
     perfRule.assertDurationAround(MavenLogs.extractTotalTime(result.getLogs()), 28200L);
 
