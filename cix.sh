@@ -9,6 +9,7 @@ case "$RUN_ACTIVITY" in
     DB_ENGINE=`echo $RUN_ACTIVITY | sed "s/run-db-unit-tests-//g"`
 
     ./run-db-unit-tests.sh "http://infra.internal.sonarsource.com/jenkins/orch-${DB_ENGINE}.properties"
+    ./run-db-integration-tests.sh "http://infra.internal.sonarsource.com/jenkins/orch-${DB_ENGINE}.properties"
     ;;
 
   run-db-integration-tests-*)
