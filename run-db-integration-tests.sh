@@ -7,5 +7,6 @@ shift
 cd it
 mvn verify \
   -Dorchestrator.configUrl=$ORCHESTRATOR_CONFIG_URL \
-  -Pcategory=Categ1 \
+  -PdbTests \
+  -Dcategory=Categ1 \
   -B -e -V $*
