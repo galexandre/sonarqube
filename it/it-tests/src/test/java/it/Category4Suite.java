@@ -28,6 +28,7 @@ import it.dbCleaner.PurgeTest;
 import it.duplication.CrossProjectDuplicationsOnRemoveFileTest;
 import it.duplication.CrossProjectDuplicationsTest;
 import it.duplication.DuplicationsTest;
+import it.highlighting.HighlightingTest;
 import it.serverSystem.HttpsTest;
 import it.serverSystem.RestartTest;
 import it.serverSystem.ServerSystemRestartingOrchestrator;
@@ -64,7 +65,9 @@ import static util.ItUtils.xooPlugin;
   CrossProjectDuplicationsOnRemoveFileTest.class,
   DuplicationsTest.class,
   // db cleaner
-  PurgeTest.class
+  PurgeTest.class,
+  // highlighting
+  HighlightingTest.class
 })
 public class Category4Suite {
 
