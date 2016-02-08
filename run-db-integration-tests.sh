@@ -8,5 +8,5 @@ cd it
 mvn verify \
   -Dorchestrator.configUrl=$ORCHESTRATOR_CONFIG_URL \
   -PdbTests \
-  -Dcategory=Categ1 \
-  -B -e -V $*
+  -Dcategory=Category1 \
+  -Dsource.skip=true -B -e -V $*
