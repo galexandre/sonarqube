@@ -152,6 +152,24 @@
 
   <profiles>
     <profile>
+      <id>qa</id>
+      <activation>
+        <property>
+          <name>env.SONARSOURCE_QA</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>sonar-application</artifactId>
+          <version>${project.version}</version>
+          <type>zip</type>
+        </dependency>
+      </dependencies>
+    </profile>
+
+    <profile>
       <!-- SonarSource internal use -->
       <id>dbTests</id>
       <activation>
