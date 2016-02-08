@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -136,18 +137,6 @@
         </executions>
       </plugin>
     </plugins>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.sonarsource.orchestrator</groupId>
-          <artifactId>orchestrator-maven-plugin</artifactId>
-          <version>${orchestrator.version}</version>
-          <configuration>
-            <sqVersion>${project.version}</sqVersion>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
   </build>
 
   <profiles>
@@ -159,14 +148,43 @@
           <value>true</value>
         </property>
       </activation>
-      <dependencies>
-        <dependency>
-          <groupId>${project.groupId}</groupId>
-          <artifactId>sonar-application</artifactId>
-          <version>${project.version}</version>
-          <type>zip</type>
-        </dependency>
-      </dependencies>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>download-sq</id>
+                <goals>
+                  <goal>get</goal>
+                </goals>
+                <phase>generate-test-resources</phase>
+                <configuration>
+                  <artifact>${project.groupId}:sonar-application:${project.version}:zip</artifact>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.sonarsource.orchestrator</groupId>
+            <artifactId>orchestrator-maven-plugin</artifactId>
+            <version>${orchestrator.version}</version>
+            <executions>
+              <execution>
+                <id>create-db</id>
+                <goals>
+                  <goal>create-db</goal>
+                </goals>
+                <phase>generate-test-resources</phase>
+                <configuration>
+                  <sqVersion>${project.version}</sqVersion>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
 
     <profile>
@@ -190,18 +208,19 @@
           <artifactId>postgresql</artifactId>
         </dependency>
         <dependency>
-        <!-- this artifact is located in the SonarSource internal repository -->
-        <groupId>com.oracle</groupId>
-        <artifactId>ojdbc6</artifactId>
-        <version>11.2.0.3.0</version>
-        <scope>test</scope>
+          <!-- this artifact is located in the SonarSource internal repository -->
+          <groupId>com.oracle</groupId>
+          <artifactId>ojdbc6</artifactId>
+          <version>11.2.0.3.0</version>
+          <scope>test</scope>
         </dependency>
         <dependency>
           <groupId>com.microsoft.sqljdbc</groupId>
           <artifactId>sqljdbc41</artifactId>
           <version>4.1</version>
           <scope>system</scope>
-          <systemPath>${project.basedir}/../sonar-application/src/main/assembly/lib/jdbc/mssql/sqljdbc41.jar</systemPath>
+          <systemPath>${project.basedir}/../sonar-application/src/main/assembly/lib/jdbc/mssql/sqljdbc41.jar
+          </systemPath>
         </dependency>
       </dependencies>
     </profile>
